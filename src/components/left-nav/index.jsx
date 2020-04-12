@@ -79,7 +79,7 @@ class LeftNav extends Component {
                 ));
             } else {
                 //查找一个与当前请求路径匹配的子item
-                const cItem = item.children.find(cItem => cItem.key === path);
+                const cItem = item.children.find(cItem => path.indexOf(cItem.key) === 0);
                 if (cItem) {
                     this.openKey = item.key;
                 }
@@ -110,7 +110,11 @@ class LeftNav extends Component {
 
     render() {
         //获取当前请求的路径this.props.location.pathname
-        const path = this.props.location.pathname;
+        let path = this.props.location.pathname;
+        if (path.indexOf('/product')===0){  //说明请求路径是商品管理或其子路由
+            path = '/product';
+        }
+
         const openKey = this.openKey;
 
         return (

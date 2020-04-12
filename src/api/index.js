@@ -30,3 +30,8 @@ export const reqWeather = (city) => {
         resolve(data);
     });
 }
+
+/**
+ * 请求函数
+ */
+export const reqCategory = (id) => {}

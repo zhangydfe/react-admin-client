@@ -5,6 +5,7 @@ import {PlusOutlined} from '@ant-design/icons';
 import LinkButton from '../../components/link-button'
 import AddForm from './add-form';
 import UpdateForm from './update-form'
+import {PAGE_SIZE} from "../../utils/constants";
 
 /**
  * 商品类型应用组件
@@ -210,7 +211,7 @@ export default class Category extends Component {
                         dataSource={parentId === '0' ? categorys : subCategorys}
                         columns={this.columns}
                         pagination={{
-                            defaultPageSize: 5,
+                            defaultPageSize: PAGE_SIZE,
                             showSizeChanger: true,
                             showQuickJumper: true
                         }}
