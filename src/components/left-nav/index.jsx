@@ -6,6 +6,7 @@ import {createFromIconfontCN} from '@ant-design/icons';
 import './index.less'
 import logo from '../../assets/images/logo.jpg';
 import menuList from '../../config/menuConfig';
+import storageUtils from "../../utils/storageUtils";
 
 const {SubMenu} = Menu;
 const IconFont = createFromIconfontCN({
@@ -59,6 +60,18 @@ class LeftNav extends Component {
         });
     }
 
+    /**
+     * 判断用户是否有权限
+     * @param item
+     * @returns {boolean}
+     */
+    hasAuth = (item) => {
+        const username = storageUtils.getUser().username;
+        if (username === 'admin') {
+            return true
+        }
+    }
+
     /*
     * 根据menu的数据生成对应的标签
     * reduce+ 递归调用
@@ -67,34 +80,38 @@ class LeftNav extends Component {
         //获取当前请求的路径this.props.location.pathname
         const path = this.props.location.pathname;
 
+        //生成左侧菜单栏
         return menuList.reduce((pre, item) => {
-            if (!item.children) {
-                pre.push((
-                    <Menu.Item key={item.key}>
-                        <Link to={item.key}>
-                            <IconFont type={item.icon}/>
-                            <span>{item.title}</span>
-                        </Link>
-                    </Menu.Item>
-                ));
-            } else {
-                //查找一个与当前请求路径匹配的子item
-                const cItem = item.children.find(cItem => path.indexOf(cItem.key) === 0);
-                if (cItem) {
-                    this.openKey = item.key;
-                }
-                pre.push((
-                    <SubMenu
-                        key={item.key}
-                        title={
-                            <span>
+            //如果当前用户有权限，生成相应的菜单栏
+            if (this.hasAuth(item)) {
+                if (!item.children) {
+                    pre.push((
+                        <Menu.Item key={item.key}>
+                            <Link to={item.key}>
+                                <IconFont type={item.icon}/>
+                                <span>{item.title}</span>
+                            </Link>
+                        </Menu.Item>
+                    ));
+                } else {
+                    //查找一个与当前请求路径匹配的子item
+                    const cItem = item.children.find(cItem => path.indexOf(cItem.key) === 0);
+                    if (cItem) {
+                        this.openKey = item.key;
+                    }
+                    pre.push((
+                        <SubMenu
+                            key={item.key}
+                            title={
+                                <span>
                                 <IconFont type={item.icon}/>
                                 <span>{item.title}</span>
                             </span>
-                        }
-                    >
-                        {this.getMenuNodes(item.children)}
-                    </SubMenu>));
+                            }
+                        >
+                            {this.getMenuNodes(item.children)}
+                        </SubMenu>));
+                }
             }
             return pre;
         }, []);
@@ -111,7 +128,7 @@ class LeftNav extends Component {
     render() {
         //获取当前请求的路径this.props.location.pathname
         let path = this.props.location.pathname;
-        if (path.indexOf('/product')===0){  //说明请求路径是商品管理或其子路由
+        if (path.indexOf('/product') === 0) {  //说明请求路径是商品管理或其子路由
             path = '/product';
         }
 
